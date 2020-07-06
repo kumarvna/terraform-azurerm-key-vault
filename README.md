@@ -80,8 +80,12 @@ module "key-vault" {
   network_acls = {
     bypass                     = "AzureServices"
     default_action             = "Deny"
-    ip_rules                   = ["123.201.18.148"]  # One or more IP Addresses, or CIDR Blocks to access this Key Vault.
-    virtual_network_subnet_ids = [] # One or more Subnet ID's to access this Key Vault.
+
+    # One or more IP Addresses, or CIDR Blocks to access this Key Vault.
+    ip_rules                   = ["123.201.18.148"]
+
+    # One or more Subnet ID's to access this Key Vault.
+    virtual_network_subnet_ids = []
   }
   
 # ....omitted
