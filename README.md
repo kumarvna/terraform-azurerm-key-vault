@@ -180,7 +180,7 @@ azurerm | ~> 2.27
 
 | Name | Version |
 |------|---------|
-azurerm | ~> 2.27
+azurerm | 2.27
 random | n/a
 azuread | n/a
 
