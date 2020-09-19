@@ -169,6 +169,21 @@ module "key-vault" {
 }  
 ```
 
+## Requirements
+
+Name | Version
+-----|--------
+terraform | >= 0.13
+azurerm | ~> 2.27
+
+## Providers
+
+| Name | Version |
+|------|---------|
+azurerm | ~> 2.27
+random | n/a
+azuread | n/a
+
 ## Inputs
 
 Name | Description | Type | Default
@@ -210,7 +225,7 @@ Name | Description
 
 ## Authors
 
-Module is maintained by [Kumaraswamy Vithanala](mailto:kumarvna@gmail.com) with the help from other awesome contributors.
+Originally created by [Kumaraswamy Vithanala](mailto:kumarvna@gmail.com)
 
 ## Other resources
 
