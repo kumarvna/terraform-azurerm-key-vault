@@ -30,7 +30,7 @@ variable "enabled_for_template_deployment" {
 
 variable "enable_soft_delete" {
   description = " Should Soft Delete be enabled for this Key Vault?"
-  default     = false
+  default     = true
 }
 
 variable "enable_purge_protection" {
@@ -75,4 +75,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-

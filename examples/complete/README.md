@@ -7,7 +7,7 @@ Terraform Module to create a Key Vault also adds required access policies for AD
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "1.0.0"
+  version = "2.0.0"
 
   # Resource Group and Key Vault pricing tier details
   resource_group_name        = "rg-demo-project-shared-westeurope-001"

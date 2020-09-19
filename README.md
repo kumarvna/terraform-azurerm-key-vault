@@ -9,7 +9,7 @@ This Terraform Module creates a Key Vault also adds required access policies for
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "1.0.0"
+  version = "2.0.0"
 
   # Resource Group and Key Vault pricing tier details
   resource_group_name        = "rg-demo-project-shared-westeurope-001"
@@ -73,7 +73,7 @@ Default action is set to `Allow` when no network rules matched. A `virtual_netwo
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "1.0.0"
+  version = "2.0.0"
 
   # .... omitted
 
@@ -155,7 +155,7 @@ End Date of the Project|Date when this application, workload, or service is plan
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "1.0.0"
+  version = "2.0.0"
 
   # ... omitted
 
