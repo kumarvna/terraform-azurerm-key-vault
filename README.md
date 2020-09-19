@@ -113,7 +113,7 @@ When you need to pass a secure value (like a password) as a parameter during dep
 
 When soft-delete is enabled, resources marked as deleted resources are retained for a specified period (90 days by default). The service further provides a mechanism for recovering the deleted object, essentially undoing the deletion.
 
-When creating a new key vault, soft-delete is enabled by default. You can create a key vault without soft-delete through this module by setting the argument `enable_soft_delete = false`. Once soft-delete is enabled on a key vault it cannot be disabled.
+When creating a new key vault, soft-delete is enabled by default. __The ability to opt out of soft-delete will be deprecated by the end of the year 2020__, and soft-delete protection will automatically be turned on for all key vaults.
 
 Purge protection is an optional Key Vault behavior and is not enabled by default. Purge protection can only be enabled once soft-delete is enabled. It can be turned on using this module by setting the argument `enable_purge_protection = true`.
 
