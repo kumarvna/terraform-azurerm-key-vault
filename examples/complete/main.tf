@@ -20,7 +20,7 @@ module "key-vault" {
   # Make sure to use list of user principal names of Azure AD users.
   access_policies = [
     {
-      azure_ad_user_principal_names = ["harshal.yadwadkar@tietoevry.com", "sandeep.kannan@tietoevry.com"]
+      azure_ad_user_principal_names = ["user1@example.com", "user2@example.com"]
       key_permissions               = ["get", "list"]
       secret_permissions            = ["get", "list"]
       certificate_permissions       = ["get", "import", "list"]
