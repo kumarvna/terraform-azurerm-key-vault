@@ -28,14 +28,19 @@ variable "enabled_for_template_deployment" {
   default     = true
 }
 
-variable "enable_soft_delete" {
-  description = " Should Soft Delete be enabled for this Key Vault?"
-  default     = true
+variable "enable_rbac_authorization" {
+  description = "Specify whether Azure Key Vault uses Role Based Access Control (RBAC) for authorization of data actions"
+  default     = false
 }
 
 variable "enable_purge_protection" {
   description = "Is Purge Protection enabled for this Key Vault?"
   default     = false
+}
+
+variable "soft_delete_retention_days" {
+  description = "The number of days that items should be retained for once soft-deleted. The valid value can be between 7 and 90 days"
+  default     = 90
 }
 
 variable "access_policies" {
