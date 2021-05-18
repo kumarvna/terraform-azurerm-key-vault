@@ -9,7 +9,7 @@ This Terraform Module creates a Key Vault also adds required access policies for
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "2.0.0"
+  version = "2.1.0"
 
   # Resource Group and Key Vault pricing tier details
   resource_group_name        = "rg-demo-project-shared-westeurope-001"
@@ -73,7 +73,7 @@ Default action is set to `Allow` when no network rules matched. A `virtual_netwo
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "2.0.0"
+  version = "2.1.0"
 
   # .... omitted
 
@@ -155,7 +155,7 @@ End Date of the Project|Date when this application, workload, or service is plan
 ```hcl
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
-  version = "2.0.0"
+  version = "2.1.0"
 
   # ... omitted
 
@@ -174,15 +174,15 @@ module "key-vault" {
 Name | Version
 -----|--------
 terraform | >= 0.13
-azurerm | ~> 2.27
+azurerm | >= 2.59.0
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-azurerm | 2.27
-random | n/a
-azuread | n/a
+azurerm | >= 2.59.0
+random | >= 3.1.0
+azuread | >= 1.4.0
 
 ## Inputs
 
@@ -195,7 +195,8 @@ Name | Description | Type | Default
 `enabled_for_disk_encryption`|Allow Disk Encryption to retrieve secrets from the vault and unwrap keys|string|`"false"`
 `enabled_for_template_deployment`|Allow Resource Manager to retrieve secrets from the Key Vault|string|`"false"`
 `enable_purge_protection`|Is Purge Protection enabled for this Key Vault?|string|`"false"`
-`enable_soft_delete`|Should Soft Delete be enabled for this Key Vault?|string|`"false"`
+`enable_rbac_authorization`|Specify whether Azure Key Vault uses Role Based Access Control (RBAC) for authorization of data actions|string|`false`
+`soft_delete_retention_days`|The number of days that items should be retained for once soft-deleted. The valid value can be between 7 and 90 days|string|`90`
 `access_policies`|List of access policies for the Key Vault|list|`{}`
 `azure_ad_user_principal_names`|List of user principal names of Azure AD users|list| `[]`
 `azure_ad_group_names`|List of names of Azure AD groups|list|`[]`
