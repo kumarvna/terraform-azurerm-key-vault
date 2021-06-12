@@ -8,8 +8,9 @@ module "key-vault" {
   key_vault_sku_pricing_tier = "premium"
 
   # Once `Purge Protection` has been Enabled it's not possible to Disable it
-  # Deleting the Key Vault with `Purge Protection` enabled will schedule the Key Vault to be deleted (currently 90 days)
-  # Once `Soft Delete` has been Enabled it's not possible to Disable it.
+  # Deleting the Key Vault with `Purge Protection` enabled will schedule the Key Vault to be deleted 
+  # The default retention period is 90 days, possible values are from 7 to 90 days
+  # use `soft_delete_retention_days` to set the retention period
   enable_purge_protection = false
 
   # Adding Key vault logs to Azure monitoring and Log Analytics space
