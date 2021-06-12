@@ -20,6 +20,7 @@ module "key-vault" {
   enable_purge_protection = false
 
   # Adding Key vault logs to Azure monitoring and Log Analytics space
+  # to enable key-vault logs, either one of log_analytics_workspace_id or storage_account_id required  
   log_analytics_workspace_id = var.log_analytics_workspace_id
   storage_account_id         = var.storage_account_id
 
