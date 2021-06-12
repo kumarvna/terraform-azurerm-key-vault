@@ -67,7 +67,7 @@ variable "log_analytics_workspace_id" {
 
 variable "azure_monitor_logs_retention_in_days" {
   description = "The Azure Monitoring data retention in days."
-  default     = 30
+  default     = 0
 }
 
 variable "storage_account_id" {

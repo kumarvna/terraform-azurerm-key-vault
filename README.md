@@ -12,17 +12,18 @@ module "key-vault" {
   version = "2.1.0"
 
   # Resource Group and Key Vault pricing tier details
-  resource_group_name        = "rg-demo-project-shared-westeurope-001"
+  resource_group_name        = "rg-shared-westeurope-01"
   key_vault_name             = "demo-project-shard"
   key_vault_sku_pricing_tier = "premium"
 
   # Once `Purge Protection` has been Enabled it's not possible to Disable it
-  # Deleting the Key Vault with `Purge Protection` enabled will schedule the Key Vault to be deleted (currently 90 days)
-  # Once `Soft Delete` has been Enabled it's not possible to Disable it.
+  # Deleting the Key Vault with `Purge Protection` enabled will schedule the Key Vault to be deleted 
+  # The default retention period is 90 days, possible values are from 7 to 90 days
+  # use `soft_delete_retention_days` to set the retention period
   enable_purge_protection = false
-  enable_soft_delete      = false
 
-  # Adding Key valut logs to Azure monitoring and Log Analytics space
+  # Adding Key vault logs to Azure monitoring and Log Analytics space
+  # to enable key-vault logs, either one of log_analytics_workspace_id or storage_account_id required  
   log_analytics_workspace_id = var.log_analytics_workspace_id
   storage_account_id         = var.storage_account_id
 
@@ -37,23 +38,24 @@ module "key-vault" {
       storage_permissions           = ["backup", "get", "list", "recover"]
     },
 
-    # Access policies for AD Groups, enable this feature to provide list of Azure AD groups and set permissions.
+  # Access policies for AD Groups, enable this feature to provide list of Azure AD groups and set permissions.
     {
       azure_ad_group_names = ["ADGroupName1", "ADGroupName2"]
       secret_permissions   = ["get", "list", "set"]
     },
+
   ]
 
   # Create a required Secrets as per your need.
-  # When you Add `usernames` with empty password this module creates a strong random password
-  # use .tfvars file to manage the secrets to avoid security violations.
+  # When you Add `usernames` with empty password this module creates a strong random password 
+  # use .tfvars file to manage the secrets as variables to avoid security issues. 
   secrets = {
     "message" = "Hello, world!"
     "vmpass"  = ""
   }
 
   # Adding TAG's to your Azure resources (Required)
-  # ProjectName and Env are already declared above, to use them here or create a varible.
+  # ProjectName and Env are already declared above, to use them here or create a varible. 
   tags = {
     ProjectName  = "demo-project"
     Env          = "dev"
@@ -113,7 +115,7 @@ When you need to pass a secure value (like a password) as a parameter during dep
 
 When soft-delete is enabled, resources marked as deleted resources are retained for a specified period (90 days by default). The service further provides a mechanism for recovering the deleted object, essentially undoing the deletion.
 
-When creating a new key vault, soft-delete is enabled by default. __The ability to opt out of soft-delete will be deprecated by the end of the year 2020__, and soft-delete protection will automatically be turned on for all key vaults.
+When creating a new key vault, soft-delete is enabled by default. __As of 2020-12-15 Azure now requires that Soft Delete is enabled on Key Vaults and this can no longer be disabled__.
 
 Purge protection is an optional Key Vault behavior and is not enabled by default. Purge protection can only be enabled once soft-delete is enabled. It can be turned on using this module by setting the argument `enable_purge_protection = true`.
 
