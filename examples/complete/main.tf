@@ -3,7 +3,7 @@ module "key-vault" {
   version = "2.1.0"
 
   # Resource Group and Key Vault pricing tier details
-  resource_group_name        = "rg-sap-test-kumars" #"rg-shared-westeurope-01"
+  resource_group_name        = "rg-shared-westeurope-01"
   key_vault_name             = "demo-project-shard"
   key_vault_sku_pricing_tier = "premium"
 
@@ -12,7 +12,7 @@ module "key-vault" {
   # Once `Soft Delete` has been Enabled it's not possible to Disable it.
   enable_purge_protection = false
 
-  # Adding Key valut logs to Azure monitoring and Log Analytics space
+  # Adding Key vault logs to Azure monitoring and Log Analytics space
   log_analytics_workspace_id = var.log_analytics_workspace_id
   storage_account_id         = var.storage_account_id
 
@@ -27,7 +27,7 @@ module "key-vault" {
       storage_permissions           = ["backup", "get", "list", "recover"]
     },
 
-    /*    # Access policies for AD Groups, enable this feature to provide list of Azure AD groups and set permissions.
+  /* # Access policies for AD Groups, enable this feature to provide list of Azure AD groups and set permissions.
     {
       azure_ad_group_names = ["ADGroupName1", "ADGroupName2"]
       secret_permissions   = ["get", "list", "set"]
