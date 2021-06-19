@@ -60,6 +60,11 @@ variable "secrets" {
   default     = {}
 }
 
+variable "random_password_length" {
+  description = "The desired length of random password created by this module"
+  default     = 24
+}
+
 variable "log_analytics_workspace_id" {
   description = "Specifies the ID of a Log Analytics Workspace where Diagnostics Data to be sent"
   default     = null
