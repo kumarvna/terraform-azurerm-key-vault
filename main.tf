@@ -143,7 +143,7 @@ resource "azurerm_key_vault" "main" {
 }
 
 resource "random_password" "passwd" {
-  for_each    = var.secrets
+  for_each    = { for k, v in var.secrets : k => v if v == "" }
   length      = 24
   min_upper   = 4
   min_lower   = 2
