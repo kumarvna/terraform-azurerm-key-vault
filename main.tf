@@ -15,7 +15,7 @@ locals {
   azure_ad_group_names          = distinct(flatten(local.access_policies[*].azure_ad_group_names))
   azure_ad_user_principal_names = distinct(flatten(local.access_policies[*].azure_ad_user_principal_names))
 
-  group_object_ids = { for g in data.azuread_group.adgrp : lower(g.name) => g.id }
+  group_object_ids = { for g in data.azuread_group.adgrp : lower(g.display_name) => g.id }
   user_object_ids  = { for u in data.azuread_user.adusr : lower(u.user_principal_name) => u.id }
 
   flattened_access_policies = concat(
