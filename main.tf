@@ -125,18 +125,6 @@ resource "azurerm_resource_group" "rg" {
   tags     = merge({ "ResourceName" = format("%s", var.resource_group_name) }, var.tags, )
 }
 
-data "azurerm_log_analytics_workspace" "logws" {
-  count               = var.log_analytics_workspace_name != null ? 1 : 0
-  name                = var.log_analytics_workspace_name
-  resource_group_name = local.resource_group_name
-}
-
-data "azurerm_storage_account" "storeacc" {
-  count               = var.storage_account_name != null ? 1 : 0
-  name                = var.storage_account_name
-  resource_group_name = local.resource_group_name
-}
-
 data "azurerm_client_config" "current" {}
 
 #-------------------------------------------------
@@ -240,11 +228,11 @@ resource "azurerm_key_vault_secret" "keys" {
 # azurerm monitoring diagnostics - KeyVault
 #---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "diag" {
-  count                      = var.log_analytics_workspace_name != null || var.storage_account_name != null ? 1 : 0
+  count                      = var.log_analytics_workspace_id != null ? 1 : 0
   name                       = lower(format("%s-diag", azurerm_key_vault.main.name))
   target_resource_id         = azurerm_key_vault.main.id
-  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.logws.0.id
-  storage_account_id         = var.storage_account_name != null ? data.azurerm_storage_account.storeacc.0.id : null
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+  storage_account_id         = var.storage_account_id != null ? var.storage_account_id : null
 
   dynamic "log" {
     for_each = var.kv_diag_logs

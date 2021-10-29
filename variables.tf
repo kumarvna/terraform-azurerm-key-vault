@@ -13,16 +13,6 @@ variable "location" {
   default     = ""
 }
 
-variable "log_analytics_workspace_name" {
-  description = "The name of log analytics workspace name"
-  default     = null
-}
-
-variable "storage_account_name" {
-  description = "The name of the hub storage account to store logs"
-  default     = null
-}
-
 variable "key_vault_name" {
   description = "The Name of the key vault"
   default     = ""
@@ -70,8 +60,13 @@ variable "access_policies" {
 
 variable "network_acls" {
   description = "Network rules to apply to key vault."
-  type        = object({ bypass = string, default_action = string, ip_rules = list(string), virtual_network_subnet_ids = list(string) })
-  default     = null
+  type = object({
+    bypass                     = string
+    default_action             = string
+    ip_rules                   = list(string)
+    virtual_network_subnet_ids = list(string)
+  })
+  default = null
 }
 
 variable "secrets" {
@@ -82,7 +77,7 @@ variable "secrets" {
 
 variable "random_password_length" {
   description = "The desired length of random password created by this module"
-  default     = 24
+  default     = 32
 }
 
 variable "certificate_contacts" {
@@ -98,11 +93,6 @@ variable "certificate_contacts" {
 variable "log_analytics_workspace_id" {
   description = "Specifies the ID of a Log Analytics Workspace where Diagnostics Data to be sent"
   default     = null
-}
-
-variable "azure_monitor_logs_retention_in_days" {
-  description = "The Azure Monitoring data retention in days."
-  default     = 0
 }
 
 variable "storage_account_id" {
