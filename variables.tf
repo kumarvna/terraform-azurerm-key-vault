@@ -90,6 +90,36 @@ variable "certificate_contacts" {
   default = []
 }
 
+variable "enable_private_endpoint" {
+  description = "Manages a Private Endpoint to Azure Container Registry"
+  default     = false
+}
+
+variable "virtual_network_name" {
+  description = "The name of the virtual network"
+  default     = ""
+}
+
+variable "existing_vnet_id" {
+  description = "The resoruce id of existing Virtual network"
+  default     = null
+}
+
+variable "existing_subnet_id" {
+  description = "The resource id of existing subnet"
+  default     = null
+}
+
+variable "existing_private_dns_zone" {
+  description = "Name of the existing private DNS zone"
+  default     = null
+}
+
+variable "private_subnet_address_prefix" {
+  description = "address prefix of the subnet for private endpoints"
+  default     = null
+}
+
 variable "log_analytics_workspace_id" {
   description = "Specifies the ID of a Log Analytics Workspace where Diagnostics Data to be sent"
   default     = null

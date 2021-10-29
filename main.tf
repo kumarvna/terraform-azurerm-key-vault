@@ -220,8 +220,88 @@ resource "azurerm_key_vault_secret" "keys" {
   lifecycle {
     ignore_changes = [
       tags,
+      value,
     ]
   }
+}
+
+#---------------------------------------------------------
+# Private Link for Keyvault - Default is "false" 
+#---------------------------------------------------------
+data "azurerm_virtual_network" "vnet01" {
+  count               = var.enable_private_endpoint && var.existing_vnet_id == null ? 1 : 0
+  name                = var.virtual_network_name
+  resource_group_name = local.resource_group_name
+}
+
+resource "azurerm_subnet" "snet-ep" {
+  count                                          = var.enable_private_endpoint && var.existing_subnet_id == null ? 1 : 0
+  name                                           = "snet-endpoint-${local.location}"
+  resource_group_name                            = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.resource_group_name : element(split("/", var.existing_vnet_id), 4)
+  virtual_network_name                           = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.name : element(split("/", var.existing_vnet_id), 8)
+  address_prefixes                               = var.private_subnet_address_prefix
+  enforce_private_link_endpoint_network_policies = true
+}
+
+resource "azurerm_private_endpoint" "pep1" {
+  count               = var.enable_private_endpoint ? 1 : 0
+  name                = format("%s-private-endpoint", var.key_vault_name)
+  location            = local.location
+  resource_group_name = local.resource_group_name
+  subnet_id           = var.existing_subnet_id == null ? azurerm_subnet.snet-ep.0.id : var.existing_subnet_id
+  tags                = merge({ "Name" = format("%s-private-endpoint", var.key_vault_name) }, var.tags, )
+
+  private_service_connection {
+    name                           = "keyvault-privatelink"
+    is_manual_connection           = false
+    private_connection_resource_id = azurerm_key_vault.main.id
+    subresource_names              = ["vault"]
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
+}
+
+data "azurerm_private_endpoint_connection" "private-ip1" {
+  count               = var.enable_private_endpoint ? 1 : 0
+  name                = azurerm_private_endpoint.pep1.0.name
+  resource_group_name = local.resource_group_name
+  depends_on          = [azurerm_key_vault.main]
+}
+
+resource "azurerm_private_dns_zone" "dnszone1" {
+  count               = var.existing_private_dns_zone == null && var.enable_private_endpoint ? 1 : 0
+  name                = "privatelink.vaultcore.azure.net"
+  resource_group_name = local.resource_group_name
+  tags                = merge({ "Name" = format("%s", "KeyVault-Private-DNS-Zone") }, var.tags, )
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "vent-link1" {
+  count                 = var.existing_private_dns_zone == null && var.enable_private_endpoint ? 1 : 0
+  name                  = "vnet-private-zone-link"
+  resource_group_name   = local.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.dnszone1.0.name
+  virtual_network_id    = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.id : var.existing_vnet_id
+  registration_enabled  = true
+  tags                  = merge({ "Name" = format("%s", "vnet-private-zone-link") }, var.tags, )
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
+}
+
+resource "azurerm_private_dns_a_record" "arecord1" {
+  count               = var.enable_private_endpoint ? 1 : 0
+  name                = azurerm_key_vault.main.name
+  zone_name           = var.existing_private_dns_zone == null ? azurerm_private_dns_zone.dnszone1.0.name : var.existing_private_dns_zone
+  resource_group_name = local.resource_group_name
+  ttl                 = 300
+  records             = [data.azurerm_private_endpoint_connection.private-ip1.0.private_service_connection.0.private_ip_address]
 }
 
 #---------------------------------------------------
