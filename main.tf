@@ -240,7 +240,7 @@ resource "azurerm_key_vault_secret" "keys" {
 # azurerm monitoring diagnostics - KeyVault
 #---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "diag" {
-  count                      = var.log_analytics_workspace_id != null ? 1 : 0
+  count                      = var.log_analytics_workspace_name != null || var.storage_account_name != null ? 1 : 0
   name                       = lower(format("%s-diag", azurerm_key_vault.main.name))
   target_resource_id         = azurerm_key_vault.main.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.logws.0.id
