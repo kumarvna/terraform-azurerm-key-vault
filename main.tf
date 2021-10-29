@@ -1,5 +1,8 @@
 
 locals {
+  resource_group_name = element(coalescelist(data.azurerm_resource_group.rgrp.*.name, azurerm_resource_group.rg.*.name, [""]), 0)
+  location            = element(coalescelist(data.azurerm_resource_group.rgrp.*.location, azurerm_resource_group.rg.*.location, [""]), 0)
+
   access_policies = [
     for p in var.access_policies : merge({
       azure_ad_group_names             = []
@@ -107,16 +110,42 @@ data "azuread_service_principal" "adspn" {
   display_name = local.azure_ad_service_principal_names[count.index]
 }
 
-data "azurerm_resource_group" "rg" {
-  name = var.resource_group_name
+#----------------------------------------------------------
+# Resource Group Creation or selection - Default is "true"
+#----------------------------------------------------------
+data "azurerm_resource_group" "rgrp" {
+  count = var.create_resource_group ? 0 : 1
+  name  = var.resource_group_name
+}
+
+resource "azurerm_resource_group" "rg" {
+  count    = var.create_resource_group ? 1 : 0
+  name     = lower(var.resource_group_name)
+  location = var.location
+  tags     = merge({ "ResourceName" = format("%s", var.resource_group_name) }, var.tags, )
+}
+
+data "azurerm_log_analytics_workspace" "logws" {
+  count               = var.log_analytics_workspace_name != null ? 1 : 0
+  name                = var.log_analytics_workspace_name
+  resource_group_name = local.resource_group_name
+}
+
+data "azurerm_storage_account" "storeacc" {
+  count               = var.storage_account_name != null ? 1 : 0
+  name                = var.storage_account_name
+  resource_group_name = local.resource_group_name
 }
 
 data "azurerm_client_config" "current" {}
 
+#-------------------------------------------------
+# Keyvault Creation - Default is "true"
+#-------------------------------------------------
 resource "azurerm_key_vault" "main" {
   name                            = lower("kv-${var.key_vault_name}")
-  location                        = data.azurerm_resource_group.rg.location
-  resource_group_name             = data.azurerm_resource_group.rg.name
+  location                        = local.location
+  resource_group_name             = local.resource_group_name
   tenant_id                       = data.azurerm_client_config.current.tenant_id
   sku_name                        = var.key_vault_sku_pricing_tier
   enabled_for_deployment          = var.enabled_for_deployment
@@ -162,7 +191,7 @@ resource "azurerm_key_vault" "main" {
   }
 
   dynamic "contact" {
-    for_each = var.certificate_contacts #!= null ? [var.certificate_contacts] : []
+    for_each = var.certificate_contacts
     content {
       email = contact.value.email
       name  = contact.value.name
@@ -176,6 +205,10 @@ resource "azurerm_key_vault" "main" {
     ]
   }
 }
+
+#-----------------------------------------------------------------------------------
+# Keyvault Secret - Random password Creation if value is empty - Default is "false"
+#-----------------------------------------------------------------------------------
 
 resource "random_password" "passwd" {
   for_each    = { for k, v in var.secrets : k => v if v == "" }
@@ -203,19 +236,26 @@ resource "azurerm_key_vault_secret" "keys" {
   }
 }
 
+#---------------------------------------------------
+# azurerm monitoring diagnostics - KeyVault
+#---------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "diag" {
-  count                          = var.log_analytics_workspace_id != null ? 1 : 0
-  name                           = format("%s-analytics", azurerm_key_vault.main.name)
-  target_resource_id             = azurerm_key_vault.main.id
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
-  log_analytics_destination_type = "Dedicated"
-  storage_account_id             = var.storage_account_id != null ? var.storage_account_id : null
-  log {
-    category = "AuditEvent"
-    enabled  = true
+  count                      = var.log_analytics_workspace_id != null ? 1 : 0
+  name                       = lower(format("%s-diag", azurerm_key_vault.main.name))
+  target_resource_id         = azurerm_key_vault.main.id
+  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.logws.0.id
+  storage_account_id         = var.storage_account_name != null ? data.azurerm_storage_account.storeacc.0.id : null
 
-    retention_policy {
-      enabled = false
+  dynamic "log" {
+    for_each = var.kv_diag_logs
+    content {
+      category = log.value
+      enabled  = true
+
+      retention_policy {
+        enabled = false
+        days    = 0
+      }
     }
   }
 

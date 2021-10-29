@@ -1,5 +1,15 @@
+variable "create_resource_group" {
+  description = "Whether to create resource group and use it for all networking resources"
+  default     = false
+}
+
 variable "resource_group_name" {
   description = "A container that holds related resources for an Azure solution"
+  default     = ""
+}
+
+variable "location" {
+  description = "The location/region to keep all your network resources. To get the list of all locations with table format from azure cli, run 'az account list-locations -o table'"
   default     = ""
 }
 
@@ -88,6 +98,11 @@ variable "azure_monitor_logs_retention_in_days" {
 variable "storage_account_id" {
   description = "The name of the storage account to store the all monitoring logs"
   default     = null
+}
+
+variable "kv_diag_logs" {
+  description = "Keyvault Monitoring Category details for Azure Diagnostic setting"
+  default     = ["AuditEvent", "AzurePolicyEvaluationDetails"]
 }
 
 variable "tags" {
