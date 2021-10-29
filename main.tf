@@ -2,21 +2,24 @@
 locals {
   access_policies = [
     for p in var.access_policies : merge({
-      azure_ad_group_names          = []
-      object_ids                    = []
-      azure_ad_user_principal_names = []
-      certificate_permissions       = []
-      key_permissions               = []
-      secret_permissions            = []
-      storage_permissions           = []
+      azure_ad_group_names             = []
+      object_ids                       = []
+      azure_ad_user_principal_names    = []
+      certificate_permissions          = []
+      key_permissions                  = []
+      secret_permissions               = []
+      storage_permissions              = []
+      azure_ad_service_principal_names = []
     }, p)
   ]
 
-  azure_ad_group_names          = distinct(flatten(local.access_policies[*].azure_ad_group_names))
-  azure_ad_user_principal_names = distinct(flatten(local.access_policies[*].azure_ad_user_principal_names))
+  azure_ad_group_names             = distinct(flatten(local.access_policies[*].azure_ad_group_names))
+  azure_ad_user_principal_names    = distinct(flatten(local.access_policies[*].azure_ad_user_principal_names))
+  azure_ad_service_principal_names = distinct(flatten(local.access_policies[*].azure_ad_service_principal_names))
 
   group_object_ids = { for g in data.azuread_group.adgrp : lower(g.display_name) => g.id }
   user_object_ids  = { for u in data.azuread_user.adusr : lower(u.user_principal_name) => u.id }
+  spn_object_ids   = { for s in data.azuread_service_principal.adspn : lower(s.display_name) => s.id }
 
   flattened_access_policies = concat(
     flatten([
@@ -45,6 +48,17 @@ locals {
       for p in local.access_policies : flatten([
         for n in p.azure_ad_user_principal_names : {
           object_id               = local.user_object_ids[lower(n)]
+          certificate_permissions = p.certificate_permissions
+          key_permissions         = p.key_permissions
+          secret_permissions      = p.secret_permissions
+          storage_permissions     = p.storage_permissions
+        }
+      ])
+    ]),
+    flatten([
+      for p in local.access_policies : flatten([
+        for n in p.azure_ad_service_principal_names : {
+          object_id               = local.spn_object_ids[lower(n)]
           certificate_permissions = p.certificate_permissions
           key_permissions         = p.key_permissions
           secret_permissions      = p.secret_permissions
@@ -88,6 +102,11 @@ data "azuread_user" "adusr" {
   user_principal_name = local.azure_ad_user_principal_names[count.index]
 }
 
+data "azuread_service_principal" "adspn" {
+  count        = length(local.azure_ad_service_principal_names)
+  display_name = local.azure_ad_service_principal_names[count.index]
+}
+
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
@@ -129,6 +148,7 @@ resource "azurerm_key_vault" "main" {
       storage_permissions     = access_policy.value.storage_permissions
     }
   }
+
   dynamic "access_policy" {
     for_each = local.service_principal_object_id != "" ? [local.self_permissions] : []
     content {
@@ -139,6 +159,21 @@ resource "azurerm_key_vault" "main" {
       secret_permissions      = access_policy.value.secret_permissions
       storage_permissions     = access_policy.value.storage_permissions
     }
+  }
+
+  dynamic "contact" {
+    for_each = var.certificate_contacts #!= null ? [var.certificate_contacts] : []
+    content {
+      email = contact.value.email
+      name  = contact.value.name
+      phone = contact.value.phone
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
   }
 }
 
@@ -160,6 +195,12 @@ resource "azurerm_key_vault_secret" "keys" {
   name         = each.key
   value        = each.value != "" ? each.value : random_password.passwd[each.key].result
   key_vault_id = azurerm_key_vault.main.id
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "diag" {
