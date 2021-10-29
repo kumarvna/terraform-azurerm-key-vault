@@ -65,6 +65,16 @@ variable "random_password_length" {
   default     = 24
 }
 
+variable "certificate_contacts" {
+  description = "Contact information to send notifications triggered by certificate lifetime events"
+  type = list(object({
+    email = string
+    name  = optional(string)
+    phone = optional(string)
+  }))
+  default = []
+}
+
 variable "log_analytics_workspace_id" {
   description = "Specifies the ID of a Log Analytics Workspace where Diagnostics Data to be sent"
   default     = null
