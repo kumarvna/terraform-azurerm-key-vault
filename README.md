@@ -164,7 +164,7 @@ module "key-vault" {
   # .... omitted
 
   # The contacts information is shared by all the certificates in the key vault. 
-  # A notification is sent to all the specified contacts for an event for any certificate in the key vault. 
+  # A notification is sent to all the specified contacts for any certificate event in the key vault. 
   # This field can only be set once user has `managecontacts` certificate permission.
   certificate_contacts = [
     {
@@ -265,24 +265,35 @@ azuread | >= 2.7.0
 
 Name | Description | Type | Default
 ---- | ----------- | ---- | -------
+`create_resource_group`|Whether to create resource group and use it for all networking resources|string|`false`
 `resource_group_name` | The name of the resource group in which resources are created | string | `""`
+`location`|The location/region to keep all your network resources|string|`""`
 `key_vault_name`|The name of the key vault|string|`""`
 `key_vault_sku_pricing_tier`|The name of the SKU used for the Key Vault. The options are: `standard`, `premium`.|string|`"standard"`
 `enabled_for_deployment`|Allow Virtual Machines to retrieve certificates stored as secrets from the Key Vault|string|`"false"`
 `enabled_for_disk_encryption`|Allow Disk Encryption to retrieve secrets from the vault and unwrap keys|string|`"false"`
 `enabled_for_template_deployment`|Allow Resource Manager to retrieve secrets from the Key Vault|string|`"false"`
-`enable_purge_protection`|Is Purge Protection enabled for this Key Vault?|string|`"false"`
 `enable_rbac_authorization`|Specify whether Azure Key Vault uses Role Based Access Control (RBAC) for authorization of data actions|string|`false`
+`enable_purge_protection`|Is Purge Protection enabled for this Key Vault?|string|`"false"`
 `soft_delete_retention_days`|The number of days that items should be retained for once soft-deleted. The valid value can be between 7 and 90 days|string|`90`
 `access_policies`|List of access policies for the Key Vault|list|`{}`
 `azure_ad_user_principal_names`|List of user principal names of Azure AD users|list| `[]`
 `azure_ad_group_names`|List of names of Azure AD groups|list|`[]`
+`azure_ad_service_principal_names`|List of names of Azure AD service principals|list|`[]`
 `key_permissions`|List of key permissions, must be one or more from the following: `backup`, `create`, `decrypt`, `delete`, `encrypt`, `get`, `import`, `list`, `purge`, `recover`, `restore`, `sign`, `unwrapKey`, `update`, `verify` and `wrapKey`.|list|`[]`
 `secret_permissions`|List of secret permissions, must be one or more from the following: `backup`, `delete`, `get`, `list`, `purge`, `recover`, `restore` and `set`. |list|`[]`
 `certificate_permissions`|List of certificate permissions, must be one or more from the following: `backup`, `create`, `delete`, `deleteissuers`, `get`, `getissuers`, `import`, `list`, `listissuers`, `managecontacts`, `manageissuers`, `purge`, `recover`, `restore`, `setissuers` and `update`.|list|`[]`
 `storage_permissions`|List of storage permissions, must be one or more from the following: `backup`, `delete`, `deletesas`, `get`, `getsas`, `list`, `listsas`, `purge`, `recover`, `regeneratekey`, `restore`, `set`, `setsas` and `update`. |list|`[]`
 `network_acls`|Configure Azure Key Vault firewalls and virtual networks|list| `{}`
 `secrets`|A map of secrets for the Key Vault|map| `{}`
+`random_password_length`|The desired length of random password created by this module|number|`32`
+`certificate_contacts`|Contact information to send notifications triggered by certificate lifetime events|list|`[]`
+`enable_private_endpoint`|Manages a Private Endpoint to Azure Container Registry|string|`false`
+`virtual_network_name`|The name of the virtual network for the private endpoint creation. conflicts with `existing_vnet_id`and shouldn't use both.|string|`""`
+`private_subnet_address_prefix`|Address prefix of the subnet for private endpoint creation. conflicts with `existing_subnet_id` and shouldn't use both|list(string)|`null`
+`existing_vnet_id`|The resoruce id of existing Virtual network for private endpoint creation. Conflicts with `virtual_network_name`and shouldn't use both|string|`null`
+`existing_subnet_id`|The resource id of existing subnet for private endpoint creation. Conflicts with `private_subnet_address_prefix` and shouldn't use both|string|`null`
+`existing_private_dns_zone`|The name of exisging private DNS zone|string|`null`
 `log_analytics_workspace_id`|The id of log analytic workspace to send logs and metrics.|string|`"null"`
 `storage_account_id`|The id of storage account to send logs and metrics|string|`"null"`
 `Tags`|A map of tags to add to all resources|map|`{}`
@@ -296,6 +307,10 @@ Name | Description
 `key_vault_uri`|The URI of the Key Vault, used for performing operations on keys and secrets
 `secrets`|A mapping of secret names and URIs
 `Key_vault_references`|A mapping of Key Vault references for App Service and Azure Functions
+`key_vault_private_endpoint`|The ID of the Key Vault Private Endpoint
+`key_vault_private_dns_zone_domain`|DNS zone name for Key Vault Private endpoints dns name records
+`key_vault_private_endpoint_ip_addresses`|Key Vault private endpoint IPv4 Addresses
+`key_vault_private_endpoint_fqdn`|Key Vault private endpoint FQDN Addresses
 
 ## Resource Graph
 
