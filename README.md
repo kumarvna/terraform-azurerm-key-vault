@@ -140,19 +140,17 @@ We can configure Azure Disk Encryption to use Azure Key Vault to control and man
 
 When you need to pass a secure value (like a password) as a parameter during deployment, you can retrieve the value from an Azure Key Vault. To access the Key Vault when deploying Managed Applications, you must grant access to the Appliance Resource Provider service principal. This access is enabled by default for this module. Incase you want to disable it set the argument `enabled_for_template_deployment = "false"`.
 
-## Soft-Delete and Purge Protection
+### Soft-Delete and Purge Protection
 
-When soft-delete is enabled, resources marked as deleted resources are retained for a specified period (90 days by default). The service further provides a mechanism for recovering the deleted object, essentially undoing the deletion.
-
-When creating a new key vault, soft-delete is enabled by default. __As of 2020-12-15 Azure now requires that Soft Delete is enabled on Key Vaults and this can no longer be disabled__.
+Soft-delete is enabled by default. When enabled, resources marked as deleted resources are retained for a specified period (90 days by default). The service further provides a mechanism for recovering the deleted object, essentially undoing the deletion.
 
 Purge protection is an optional Key Vault behavior and is not enabled by default. Purge protection can only be enabled once soft-delete is enabled. It can be turned on using this module by setting the argument `enable_purge_protection = true`.
 
-When purge protection is on, a vault or an object in the deleted state cannot be purged until the retention period has passed. Soft-deleted vaults and objects can still be recovered, ensuring that the retention policy will be followed.
+When purge protection is on, a vault or an object in the deleted state cannot be purged until the retention period has passed. Soft-deleted vaults and objects can still be recovered, ensuring that the retention policy will be followed. Soft delete retention can be updated using  `soft_delete_retention_days` argument with a valid days.
 
 > The default retention period is 90 days for the soft-delete and the purge protection retention policy uses the same interval. Once set, the retention policy interval cannot be changed.
 
-## Certificate contacts
+### Certificate contacts
 
 Certificate contacts contain contact information to send notifications triggered by certificate lifetime events. The contacts information is shared by all the certificates in the key vault. A notification is sent to all the specified contacts for an event for any certificate in the key vault.
 
@@ -184,7 +182,7 @@ module "key-vault" {
 }
 ```
 
-## Private Endpoint - Integrate Key Vault with Azure Private Link
+### Private Endpoint - Integrate Key Vault with Azure Private Link
 
 Azure Private Endpoint is a network interface that connects you privately and securely to a service powered by Azure Private Link. Private Endpoint uses a private IP address from your VNet, effectively bringing the service into your VNet.
 
