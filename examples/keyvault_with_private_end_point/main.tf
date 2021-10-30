@@ -33,7 +33,7 @@ module "key-vault" {
     },
 
     # Access policies for AD Groups
-    # enable this feature to provide list of Azure AD groups and set permissions.
+    # to enable this feature, provide a list of Azure AD groups and set permissions as required.
     {
       azure_ad_group_names    = ["ADGroupName1", "ADGroupName2"]
       key_permissions         = ["get", "list"]
@@ -43,7 +43,7 @@ module "key-vault" {
     },
 
     # Access policies for Azure AD Service Principlas
-    # enable this feature to provide list of Azure AD SPN and set permissions.
+    # To enable this feature, provide a list of Azure AD SPN and set permissions as required.
     {
       azure_ad_service_principal_names = ["azure-ad-dev-sp1", "azure-ad-dev-sp2"]
       key_permissions                  = ["get", "list"]
