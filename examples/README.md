@@ -6,7 +6,7 @@ Terraform Module to create a Key Vault also adds required access policies for az
 
 * [Simple Key Vault Creation](simple_keyvault/)
 * [Key Vault with Private Endpoint](keyvault_with_private_end_point/)
-* [Key Vault and Private Endpoiont using existing VNet and Subnet](keyvault_private_end_point_with_existing_VNet_Subnet/)
+* [Key Vault with Private Endpoiont using existing VNet and Subnet](keyvault_private_end_point_with_existing_VNet_Subnet/)
 
 ## Terraform Usage
 
