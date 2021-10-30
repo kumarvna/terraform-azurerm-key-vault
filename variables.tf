@@ -1,5 +1,15 @@
+variable "create_resource_group" {
+  description = "Whether to create resource group and use it for all networking resources"
+  default     = false
+}
+
 variable "resource_group_name" {
   description = "A container that holds related resources for an Azure solution"
+  default     = ""
+}
+
+variable "location" {
+  description = "The location/region to keep all your network resources. To get the list of all locations with table format from azure cli, run 'az account list-locations -o table'"
   default     = ""
 }
 
@@ -50,8 +60,13 @@ variable "access_policies" {
 
 variable "network_acls" {
   description = "Network rules to apply to key vault."
-  type        = object({ bypass = string, default_action = string, ip_rules = list(string), virtual_network_subnet_ids = list(string) })
-  default     = null
+  type = object({
+    bypass                     = string
+    default_action             = string
+    ip_rules                   = list(string)
+    virtual_network_subnet_ids = list(string)
+  })
+  default = null
 }
 
 variable "secrets" {
@@ -62,7 +77,47 @@ variable "secrets" {
 
 variable "random_password_length" {
   description = "The desired length of random password created by this module"
-  default     = 24
+  default     = 32
+}
+
+variable "certificate_contacts" {
+  description = "Contact information to send notifications triggered by certificate lifetime events"
+  type = list(object({
+    email = string
+    name  = optional(string)
+    phone = optional(string)
+  }))
+  default = []
+}
+
+variable "enable_private_endpoint" {
+  description = "Manages a Private Endpoint to Azure Container Registry"
+  default     = false
+}
+
+variable "virtual_network_name" {
+  description = "The name of the virtual network"
+  default     = ""
+}
+
+variable "existing_vnet_id" {
+  description = "The resoruce id of existing Virtual network"
+  default     = null
+}
+
+variable "existing_subnet_id" {
+  description = "The resource id of existing subnet"
+  default     = null
+}
+
+variable "existing_private_dns_zone" {
+  description = "Name of the existing private DNS zone"
+  default     = null
+}
+
+variable "private_subnet_address_prefix" {
+  description = "address prefix of the subnet for private endpoints"
+  default     = null
 }
 
 variable "log_analytics_workspace_id" {
@@ -70,14 +125,14 @@ variable "log_analytics_workspace_id" {
   default     = null
 }
 
-variable "azure_monitor_logs_retention_in_days" {
-  description = "The Azure Monitoring data retention in days."
-  default     = 0
-}
-
 variable "storage_account_id" {
   description = "The name of the storage account to store the all monitoring logs"
   default     = null
+}
+
+variable "kv_diag_logs" {
+  description = "Keyvault Monitoring Category details for Azure Diagnostic setting"
+  default     = ["AuditEvent", "AzurePolicyEvaluationDetails"]
 }
 
 variable "tags" {
