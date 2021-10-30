@@ -2,7 +2,7 @@
 
 Terraform Module to create a Key Vault also adds required access policies for azure AD users, groups and azure AD service principals. This module also creates private endpoint and sends all logs to log analytic workspace or storage.
 
-## Module Usage to enable privaite endpoint
+## Module Usage to enable privaite endpoint using existing VNet and Subnet
 
 ```hcl
 # Azurerm Provider configuration
