@@ -3,6 +3,17 @@ provider "azurerm" {
   features {}
 }
 
+data "azurerm_virtual_network" "example" {
+  name                = "vnet-shared-hub-westeurope-001"
+  resource_group_name = "rg-shared-westeurope-01"
+}
+
+data "azurerm_subnet" "example" {
+  name                 = "snet-private-ep"
+  virtual_network_name = data.azurerm_virtual_network.example.name
+  resource_group_name  = data.azurerm_virtual_network.example.resource_group_name
+}
+
 module "key-vault" {
   source  = "kumarvna/key-vault/azurerm"
   version = "2.2.0"
@@ -60,6 +71,14 @@ module "key-vault" {
     "message" = "Hello, world!"
     "vmpass"  = ""
   }
+
+  # Creating Private Endpoint requires, VNet name and address prefix to create a subnet
+  # By default this will create a `privatelink.vaultcore.azure.net` DNS zone. 
+  # To use existing private DNS zone specify `existing_private_dns_zone` with valid zone name
+  enable_private_endpoint = true
+  existing_vnet_id        = data.azurerm_virtual_network.example.id
+  existing_subnet_id      = data.azurerm_subnet.example.id
+  # existing_private_dns_zone     = "demo.example.com"
 
   # (Optional) To enable Azure Monitoring for Azure Application Gateway 
   # (Optional) Specify `storage_account_id` to save monitoring logs to storage. 

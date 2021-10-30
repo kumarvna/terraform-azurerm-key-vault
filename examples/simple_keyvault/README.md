@@ -52,7 +52,7 @@ module "key-vault" {
     # Access policies for Azure AD Service Principlas
     # enable this feature to provide list of Azure AD SPN and set permissions.
     {
-      azure_ad_service_principal_names = ["azure-ad-dev-sp1", "azure-ad-dev-sp1"]
+      azure_ad_service_principal_names = ["azure-ad-dev-sp1", "azure-ad-dev-sp2"]
       key_permissions                  = ["get", "list"]
       secret_permissions               = ["get", "list"]
       certificate_permissions          = ["get", "import", "list"]
