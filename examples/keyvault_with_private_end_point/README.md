@@ -2,7 +2,7 @@
 
 Terraform Module to create a Key Vault also adds required access policies for azure AD users, groups and azure AD service principals. This module also creates private endpoint and sends all logs to log analytic workspace or storage.
 
-## Module Usage
+## Module Usage to enable privaite endpoint
 
 ```hcl
 # Azurerm Provider configuration
@@ -67,6 +67,14 @@ module "key-vault" {
     "message" = "Hello, world!"
     "vmpass"  = ""
   }
+
+  # Creating Private Endpoint requires, VNet name and address prefix to create a subnet
+  # By default this will create a `privatelink.vaultcore.azure.net` DNS zone. 
+  # To use existing private DNS zone specify `existing_private_dns_zone` with valid zone name
+  enable_private_endpoint       = true
+  virtual_network_name          = "vnet-shared-hub-westeurope-001"
+  private_subnet_address_prefix = ["10.1.5.0/27"]
+  # existing_private_dns_zone     = "demo.example.com"
 
   # (Optional) To enable Azure Monitoring for Azure Application Gateway 
   # (Optional) Specify `storage_account_id` to save monitoring logs to storage. 
