@@ -1,5 +1,4 @@
 terraform {
-  experiments = [module_variable_optional_attrs]
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
@@ -14,5 +13,5 @@ terraform {
       version = ">= 3.1.0"
     }
   }
-  required_version = ">= 0.13"
+  required_version = ">= 1.3.0"
 }
