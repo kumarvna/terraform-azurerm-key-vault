@@ -41,6 +41,14 @@ output "key_vault_references" {
   }
 }
 
+output "versionless_key_vault_references" {
+  description = "A mapping of Key Vault versionless references for App Service and Azure Functions."
+  value = {
+    for k, v in azurerm_key_vault_secret.keys :
+    v.name => format("@Microsoft.KeyVault(SecretUri=%s)", v.versionless_id)
+  }
+}
+
 output "key_vault_private_endpoint" {
   description = "The ID of the Key Vault Private Endpoint"
   value       = var.enable_private_endpoint ? element(concat(azurerm_private_endpoint.pep1.*.id, [""]), 0) : null
