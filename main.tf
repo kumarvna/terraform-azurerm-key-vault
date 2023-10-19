@@ -88,10 +88,10 @@ locals {
   self_permissions = {
     object_id               = local.service_principal_object_id
     tenant_id               = data.azurerm_client_config.current.tenant_id
-    key_permissions         = ["create", "delete", "get", "backup", "decrypt", "encrypt", "import", "list", "purge", "recover", "restore", "sign", "update", "verify"]
-    secret_permissions      = ["backup", "delete", "get", "list", "purge", "recover", "restore", "set"]
-    certificate_permissions = ["backup", "create", "delete", "deleteissuers", "get", "getissuers", "import", "list", "listissuers", "managecontacts", "manageissuers", "purge", "recover", "restore", "setissuers", "update"]
-    storage_permissions     = ["backup", "delete", "deletesas", "get", "getsas", "list", "listsas", "purge", "recover", "regeneratekey", "restore", "set", "setsas", "update"]
+    key_permissions         = ["Create", "Delete", "Get", "Backup", "Decrypt", "Encrypt", "Import", "List", "Purge", "Recover", "Restore", "Sign", "Update", "Verify"]
+    secret_permissions      = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
+    certificate_permissions = ["Backup", "Create", "Delete", "DeleteIssuers", "Get", "GetIssuers", "Import", "List", "ListIssuers", "ManageContacts", "ManageIssuers", "Purge", "Recover", "Restore", "SetIssuers", "Update"]
+    storage_permissions     = ["Backup", "Delete", "DeleteSAS", "Get", "GetSAS", "List", "ListSAS", "Purge", "Recover", "RegenerateKey", "Restore", "Set", "SetSAS", "Update"]
   }
 }
 
@@ -235,12 +235,12 @@ data "azurerm_virtual_network" "vnet01" {
 }
 
 resource "azurerm_subnet" "snet-ep" {
-  count                                          = var.enable_private_endpoint && var.existing_subnet_id == null ? 1 : 0
-  name                                           = "snet-endpoint-${local.location}"
-  resource_group_name                            = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.resource_group_name : element(split("/", var.existing_vnet_id), 4)
-  virtual_network_name                           = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.name : element(split("/", var.existing_vnet_id), 8)
-  address_prefixes                               = var.private_subnet_address_prefix
-  enforce_private_link_endpoint_network_policies = true
+  count                                     = var.enable_private_endpoint && var.existing_subnet_id == null ? 1 : 0
+  name                                      = "snet-endpoint-${local.location}"
+  resource_group_name                       = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.resource_group_name : element(split("/", var.existing_vnet_id), 4)
+  virtual_network_name                      = var.existing_vnet_id == null ? data.azurerm_virtual_network.vnet01.0.name : element(split("/", var.existing_vnet_id), 8)
+  address_prefixes                          = var.private_subnet_address_prefix
+  private_endpoint_network_policies_enabled = true
 }
 
 resource "azurerm_private_endpoint" "pep1" {

@@ -18,11 +18,34 @@ output "secrets" {
   value       = { for k, v in azurerm_key_vault_secret.keys : v.name => v.id }
 }
 
-output "Key_vault_references" {
+output "versionless_secrets" {
+  description = "A mapping of secret names and versionless IDs."
+  value       = { for k, v in azurerm_key_vault_secret.keys : v.name => v.versionless_id }
+}
+
+output "resource_secrets" {
+  description = "A mapping of secret names and resource IDs."
+  value       = { for k, v in azurerm_key_vault_secret.keys : v.name => v.resource_id }
+}
+
+output "versionless_resource_secrets" {
+  description = "A mapping of secret names and versionless resource IDs."
+  value       = { for k, v in azurerm_key_vault_secret.keys : v.name => v.resource_versionless_id }
+}
+
+output "key_vault_references" {
   description = "A mapping of Key Vault references for App Service and Azure Functions."
   value = {
     for k, v in azurerm_key_vault_secret.keys :
     v.name => format("@Microsoft.KeyVault(SecretUri=%s)", v.id)
+  }
+}
+
+output "versionless_key_vault_references" {
+  description = "A mapping of Key Vault versionless references for App Service and Azure Functions."
+  value = {
+    for k, v in azurerm_key_vault_secret.keys :
+    v.name => format("@Microsoft.KeyVault(SecretUri=%s)", v.versionless_id)
   }
 }
 
